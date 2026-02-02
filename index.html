@@ -9,8 +9,8 @@
       --bg: #fff1f5;
       --card: #ffffff;
       --text: #1f2937;
-      --OF COURSE: #22c55e;
-      --NO BITCH: #ef4444;
+      --yes: #22c55e;
+      --no: #ef4444;
     }
 
     * { box-sizing: border-box; }
@@ -102,18 +102,17 @@
 <body>
   <div class="hearts" id="hearts"></div>
 
- <div class="card">
-  <h1>Shu tame mara Valentine bansho? 💘</h1>
-  <p>papa nu pyjama</p>
+  <div class="card">
+    <h1>Will you be my Valentine? 💘</h1>
+    <p>Choose wisely 😌</p>
 
-  <div class="btn-row" id="arena">
-    <button id="yesBtn" type="button">Yes</button>
-    <button id="noBtn" type="button">No</button>
+    <div class="btn-row" id="arena">
+      <button id="yesBtn" type="button">Yes</button>
+      <button id="noBtn" type="button">No</button>
+    </div>
+
+    <div class="tiny">Tip: the “No” button is… shy.</div>
   </div>
-
-  <div class="tiny">hehe.</div>
-</div>
-
 
   <script>
     // ===== Buttons behavior =====
@@ -165,13 +164,12 @@
 
     yesBtn.addEventListener("click", () => {
       burstHearts(30);
-      window.location.href = "yes.html"; <p>damn right this took me way to long, YAY MISS YOU!</p>
-
+      window.location.href = "yes.html";
     });
 
     // ===== Floating hearts =====
     const heartsLayer = document.getElementById("hearts");
-    const heartEmojis = ["💗","🎰","🍆","💘","🍑","💝","🌈","🛸"];
+    const heartEmojis = ["💗","💖","💕","💘","💞","💝"];
 
     function spawnHeart() {
       const heart = document.createElement("div");
@@ -198,6 +196,3 @@
   </script>
 </body>
 </html>
-
-
-

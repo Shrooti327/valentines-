@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine?</title>
+  <style>
+    :root {
+      --bg: #fff1f5;
+      --card: #ffffff;
+      --text: #1f2937;
+      --yes: #22c55e;
+      --no: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top, #ffe4e6, var(--bg));
+      color: var(--text);
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .card {
+      width: min(520px, 92vw);
+      background: var(--card);
+      border-radius: 22px;
+      padding: 28px 22px;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.12);
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+
+    p {
+      margin: 0 0 18px;
+      opacity: 0.8;
+    }
+
+    .btn-row {
+      position: relative;
+      height: 120px; /* room for the moving "No" */
+      display: grid;
+      place-items: center;
+      gap: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 18px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform 180ms ease, filter 180ms ease;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    #yesBtn {
+      background: var(--yes);
+      color: white;
+      transform: scale(1);
+    }
+
+    #noBtn {
+      background: var(--no);
+      color: white;
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      transform: translate(-50%, -50%);
+    }
+
+    .success {
+      display: none;
+      margin-top: 12px;
+      font-size: 20px;
+      font-weight: 650;
+    }
+
+    .success.show { display: block; }
+
+    .tiny {
+      font-size: 12px;
+      opacity: 0.65;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <h1>Will you be my Valentine? 💘</h1>
+    <p>Choose wisely 😌</p>
+
+    <div class="btn-row" id="arena">
+      <button id="yesBtn" type="button">Yes</button>
+      <button id="noBtn" type="button">No</button>
+    </div>
+
+    <div class="success" id="successMsg">YAYYYYYY!!! 🥰💐</div>
+    <div class="tiny">Tip: the “No” button is… shy.</div>
+  </div>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const successMsg = document.getElementById("successMsg");
+
+    let yesScale = 1;
+
+    // Helper: clamp number
+    const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+    // Move "No" to a random spot inside the arena
+    function flee() {
+      const rect = arena.getBoundingClientRect();
+
+      // Button dimensions (use current layout)
+      const btnRect = noBtn.getBoundingClientRect();
+      const bw = btnRect.width;
+      const bh = btnRect.height;
+
+      // Pick a new position, keeping it fully inside arena
+      const padding = 8;
+      const maxX = rect.width - bw - padding;
+      const maxY = rect.height - bh - padding;
+
+      const x = Math.random() * maxX + padding;
+      const y = Math.random() * maxY + padding;
+
+      // Place using left/top in arena coordinates
+      noBtn.style.left = `${clamp(x, padding, maxX)}px`;
+      noBtn.style.top  = `${clamp(y, padding, maxY)}px`;
+      noBtn.style.transform = "translate(0, 0)"; // override center transform after first move
+
+      // Make "Yes" get a bit bigger every time "No" runs away
+      yesScale = Math.min(2.4, yesScale + 0.12);
+      yesBtn.style.transform = `scale(${yesScale})`;
+    }
+
+    // Desktop: move away when cursor gets close
+    arena.addEventListener("mousemove", (e) => {
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = e.clientX - (noRect.left + noRect.width / 2);
+      const dy = e.clientY - (noRect.top + noRect.height / 2);
+      const dist = Math.hypot(dx, dy);
+
+      // If cursor is within 90px, flee
+      if (dist < 90) flee();
+    });
+
+    // Mobile/touch + clicking: if they try to click or touch the "No", it flees
+    noBtn.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      flee();
+    });
+
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      flee();
+    });
+
+    // Clicking yes shows success
+    yesBtn.addEventListener("click", () => {
+      successMsg.classList.add("show");
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      yesBtn.textContent = "YES 💖";
+      noBtn.style.display = "none";
+    });
+
+    // Optional: start with a tiny flee so people notice it moves
+    // setTimeout(flee, 600);
+  </script>
+</body>
+</html>
+

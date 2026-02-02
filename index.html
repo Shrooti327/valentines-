@@ -1,9 +1,8 @@
-<h1>This was so annoying, I understand why this is your profession</h1>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Valentine?</title>
   <style>
     :root {
@@ -12,40 +11,10 @@
       --text: #1f2937;
       --yes: #22c55e;
       --no: #ef4444;
-      /* Floating hearts */
-.hearts {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 9999;
-}
-
-.heart {
-  position: absolute;
-  bottom: -24px;
-  font-size: 20px;
-  opacity: 0.9;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
-  animation: floatUp linear forwards;
-}
-
-@keyframes floatUp {
-  from {
-    transform: translateY(0) translateX(0) rotate(0deg);
-    opacity: 0;
-  }
-  10% { opacity: 0.95; }
-  to {
-    transform: translateY(-110vh) translateX(var(--drift)) rotate(var(--spin));
-    opacity: 0;
-  }
-}
     }
 
     * { box-sizing: border-box; }
     body {
-      <div class="hearts" id="hearts"></div>
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       background: radial-gradient(circle at top, #ffe4e6, var(--bg));
@@ -64,25 +33,17 @@
       box-shadow: 0 16px 60px rgba(0,0,0,0.12);
       text-align: center;
       position: relative;
+      z-index: 2;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 28px;
-      letter-spacing: 0.2px;
-    }
-
-    p {
-      margin: 0 0 18px;
-      opacity: 0.8;
-    }
+    h1 { margin: 0 0 10px; font-size: 28px; }
+    p  { margin: 0 0 18px; opacity: 0.8; }
 
     .btn-row {
       position: relative;
-      height: 120px; /* room for the moving "No" */
+      height: 140px;
       display: grid;
       place-items: center;
-      gap: 14px;
     }
 
     button {
@@ -90,7 +51,7 @@
       border-radius: 999px;
       padding: 14px 22px;
       font-size: 18px;
-      font-weight: 650;
+      font-weight: 700;
       cursor: pointer;
       transition: transform 180ms ease, filter 180ms ease;
       user-select: none;
@@ -108,99 +69,104 @@
       color: white;
       position: absolute;
       left: 50%;
-      top: 58%;
+      top: 62%;
       transform: translate(-50%, -50%);
     }
 
-    .success {
-      display: none;
-      margin-top: 12px;
-      font-size: 20px;
-      font-weight: 650;
-    }
-
-    .success.show { display: block; }
-
-    .tiny {
-      font-size: 12px;
-      opacity: 0.65;
+    /* Music prompt */
+    .music-banner {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
       margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(31, 41, 55, 0.08);
     }
+    .music-banner span { font-size: 13px; opacity: 0.85; }
+    .music-btn {
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 999px;
+      background: #111827;
+      color: #fff;
+    }
+
+    /* Floating hearts */
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .heart {
+      position: absolute;
+      bottom: -24px;
+      font-size: 20px;
+      opacity: 0.9;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+      animation: floatUp linear forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.95; }
+      to   { transform: translateY(-110vh) translateX(var(--drift)) rotate(var(--spin)); opacity: 0; }
+    }
+
+    .tiny { font-size: 12px; opacity: 0.6; margin-top: 10px; }
   </style>
 </head>
+
 <body>
-  <div class="card" id="card">
-    <h1>Will you be my Valentine? 💘</h1>
-    <p>Choose wisely 😌</p>
+  <div class="hearts" id="hearts"></div>
+
+  <div class="card">
+    <h1>My love, Shu tame mara Valentine bansho?? 💘</h1>
+    <p>Cpapa nu pyjama</p>
 
     <div class="btn-row" id="arena">
       <button id="yesBtn" type="button">Yes</button>
       <button id="noBtn" type="button">No</button>
     </div>
 
-    <div class="success" id="successMsg">Took you long enough smh </div>
+    <div class="music-banner">
+      <button class="music-btn" id="musicBtn" type="button">▶ Play music</button>
+      <span>(Tap once so the music can start)</span>
+    </div>
+
+    <div class="tiny">Tip: you have no choice.</div>
   </div>
 
+  <!-- NOTE: You must add your own audio file named "smooth-operator.mp3" to the repo root -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="smooth-operator.mp3" type="audio/mpeg" />
+  </audio>
+
   <script>
-    // Floating hearts generator
-const heartsLayer = document.getElementById("hearts");
-const heartEmojis = ["💗","💖","💕","💘","💞","💝"];
-
-function spawnHeart() {
-  const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-
-  // random start position
-  const x = Math.random() * 100; // vw
-  heart.style.left = `${x}vw`;
-
-  // random size, duration, drift, spin
-  const size = 14 + Math.random() * 22;
-  const duration = 3.5 + Math.random() * 3.5;
-  const drift = `${(Math.random() * 120 - 60).toFixed(0)}px`;
-  const spin = `${(Math.random() * 80 - 40).toFixed(0)}deg`;
-
-  heart.style.fontSize = `${size}px`;
-  heart.style.animationDuration = `${duration}s`;
-  heart.style.setProperty("--drift", drift);
-  heart.style.setProperty("--spin", spin);
-
-  heartsLayer.appendChild(heart);
-
-  // cleanup after animation
-  setTimeout(() => heart.remove(), duration * 1000);
-}
-
-// steady stream
-let heartInterval = setInterval(spawnHeart, 350);
-
-// make it extra when they hover/fail to click "No"
-function burstHearts(count = 10) {
-  for (let i = 0; i < count; i++) setTimeout(spawnHeart, i * 40);
-}
-
+    // ===== Buttons behavior =====
     const arena = document.getElementById("arena");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
-    const successMsg = document.getElementById("successMsg");
 
     let yesScale = 1;
 
-    // Helper: clamp number
     const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 
-    // Move "No" to a random spot inside the arena
-    function flee(burstHearts(6);
-) {
-      const rect = arena.getBoundingClientRect();
+    function burstHearts(count = 10) {
+      for (let i = 0; i < count; i++) setTimeout(spawnHeart, i * 35);
+    }
 
-      // Button dimensions (use current layout)
+    function flee() {
+      const rect = arena.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
       const bw = btnRect.width;
       const bh = btnRect.height;
 
-      // Pick a new position, keeping it fully inside arena
       const padding = 8;
       const maxX = rect.width - bw - padding;
       const maxY = rect.height - bh - padding;
@@ -208,53 +174,91 @@ function burstHearts(count = 10) {
       const x = Math.random() * maxX + padding;
       const y = Math.random() * maxY + padding;
 
-      // Place using left/top in arena coordinates
       noBtn.style.left = `${clamp(x, padding, maxX)}px`;
       noBtn.style.top  = `${clamp(y, padding, maxY)}px`;
-      noBtn.style.transform = "translate(0, 0)"; // override center transform after first move
+      noBtn.style.transform = "translate(0, 0)";
 
-      // Make "Yes" get a bit bigger every time "No" runs away
-      yesScale = Math.min(2.4, yesScale + 0.36);
+      yesScale = Math.min(2.6, yesScale + 0.12);
       yesBtn.style.transform = `scale(${yesScale})`;
+
+      burstHearts(6);
     }
 
-    // Desktop: move away when cursor gets close
     arena.addEventListener("mousemove", (e) => {
       const noRect = noBtn.getBoundingClientRect();
       const dx = e.clientX - (noRect.left + noRect.width / 2);
       const dy = e.clientY - (noRect.top + noRect.height / 2);
       const dist = Math.hypot(dx, dy);
-
-      // If cursor is within 90px, flee
       if (dist < 90) flee();
     });
 
-    // Mobile/touch + clicking: if they try to click or touch the "No", it flees
-    noBtn.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      flee();
-    });
+    noBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); flee(); });
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); flee(); });
 
-    noBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      flee();
-    });
-
-    // Clicking yes shows success
     yesBtn.addEventListener("click", () => {
-      successMsg.classList.add("show");
-      yesBtn.disabled = true;
-      noBtn.disabled = true;
-      yesBtn.textContent = "YES 💖";
-      noBtn.style.display = "none";
-      burstHearts(25);
-clearInterval(heartInterval); // stop the constant stream if you want
-
+      burstHearts(30);
+      // Go to second page
+      window.location.href = "yes.html";
     });
 
-    // Optional: start with a tiny flee so people notice it moves
-    // setTimeout(flee, 600);
-</script>
+    // ===== Floating hearts =====
+    const heartsLayer = document.getElementById("hearts");
+    const heartEmojis = ["💗","💖","💕","💘","💞","💝"];
+
+    function spawnHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+
+      heart.style.left = `${Math.random() * 100}vw`;
+
+      const size = 14 + Math.random() * 22;
+      const duration = 3.5 + Math.random() * 3.5;
+      const drift = `${(Math.random() * 120 - 60).toFixed(0)}px`;
+      const spin = `${(Math.random() * 90 - 45).toFixed(0)}deg`;
+
+      heart.style.fontSize = `${size}px`;
+      heart.style.animationDuration = `${duration}s`;
+      heart.style.setProperty("--drift", drift);
+      heart.style.setProperty("--spin", spin);
+
+      heartsLayer.appendChild(heart);
+      setTimeout(() => heart.remove(), duration * 1000);
+    }
+
+    // steady hearts stream
+    const heartInterval = setInterval(spawnHeart, 350);
+
+    // ===== Background music (user gesture required) =====
+    const music = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("musicBtn");
+
+    async function startMusic() {
+      try {
+        await music.play();
+        musicBtn.textContent = "⏸ Pause music";
+      } catch (err) {
+        // If autoplay is blocked, user can tap again
+        musicBtn.textContent = "▶ Tap to play";
+      }
+    }
+
+    function toggleMusic() {
+      if (music.paused) startMusic();
+      else {
+        music.pause();
+        musicBtn.textContent = "▶ Play music";
+      }
+    }
+
+    musicBtn.addEventListener("click", toggleMusic);
+
+    // Bonus: if user clicks anywhere, try to start music once
+    document.addEventListener("pointerdown", () => {
+      if (music.paused) startMusic();
+    }, { once: true });
+  </script>
 </body>
 </html>
+
 

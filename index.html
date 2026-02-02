@@ -53,7 +53,7 @@
       font-size: 18px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 180ms ease, filter 180ms ease;
+      transition: transform 180ms ease;
       user-select: none;
       touch-action: manipulation;
     }
@@ -73,28 +73,6 @@
       transform: translate(-50%, -50%);
     }
 
-    /* Music prompt */
-    .music-banner {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: center;
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(31, 41, 55, 0.08);
-    }
-    .music-banner span { font-size: 13px; opacity: 0.85; }
-    .music-btn {
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 999px;
-      background: #111827;
-      color: #fff;
-    }
-
     /* Floating hearts */
     .hearts {
       position: fixed;
@@ -110,7 +88,6 @@
       opacity: 0.9;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
       animation: floatUp linear forwards;
-      will-change: transform, opacity;
     }
     @keyframes floatUp {
       from { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
@@ -126,26 +103,16 @@
   <div class="hearts" id="hearts"></div>
 
   <div class="card">
-    <h1>My love, Shu tame mara Valentine bansho?? 💘</h1>
-    <p>Cpapa nu pyjama</p>
+    <h1>Shu tame mara Valentine bansho? 💘</h1>
+    <p>papa nu pyjama</p>
 
     <div class="btn-row" id="arena">
       <button id="yesBtn" type="button">Yes</button>
       <button id="noBtn" type="button">No</button>
     </div>
 
-    <div class="music-banner">
-      <button class="music-btn" id="musicBtn" type="button">▶ Play music</button>
-      <span>(Tap once so the music can start)</span>
-    </div>
-
-    <div class="tiny">Tip: you have no choice.</div>
+    <div class="tiny">hehe.</div>
   </div>
-
-  <!-- NOTE: You must add your own audio file named "smooth-operator.mp3" to the repo root -->
-  <audio id="bgMusic" loop preload="auto">
-    <source src="smooth-operator.mp3" type="audio/mpeg" />
-  </audio>
 
   <script>
     // ===== Buttons behavior =====
@@ -197,19 +164,17 @@
 
     yesBtn.addEventListener("click", () => {
       burstHearts(30);
-      // Go to second page
       window.location.href = "yes.html";
     });
 
     // ===== Floating hearts =====
     const heartsLayer = document.getElementById("hearts");
-    const heartEmojis = ["💗","💖","💕","💘","💞","💝"];
+    const heartEmojis = ["💗","🎰","🍆","💘","🍑","💝","🌈","🛸"];
 
     function spawnHeart() {
       const heart = document.createElement("div");
       heart.className = "heart";
       heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-
       heart.style.left = `${Math.random() * 100}vw`;
 
       const size = 14 + Math.random() * 22;
@@ -227,38 +192,10 @@
     }
 
     // steady hearts stream
-    const heartInterval = setInterval(spawnHeart, 350);
-
-    // ===== Background music (user gesture required) =====
-    const music = document.getElementById("bgMusic");
-    const musicBtn = document.getElementById("musicBtn");
-
-    async function startMusic() {
-      try {
-        await music.play();
-        musicBtn.textContent = "⏸ Pause music";
-      } catch (err) {
-        // If autoplay is blocked, user can tap again
-        musicBtn.textContent = "▶ Tap to play";
-      }
-    }
-
-    function toggleMusic() {
-      if (music.paused) startMusic();
-      else {
-        music.pause();
-        musicBtn.textContent = "▶ Play music";
-      }
-    }
-
-    musicBtn.addEventListener("click", toggleMusic);
-
-    // Bonus: if user clicks anywhere, try to start music once
-    document.addEventListener("pointerdown", () => {
-      if (music.paused) startMusic();
-    }, { once: true });
+    setInterval(spawnHeart, 350);
   </script>
 </body>
 </html>
+
 
 
